@@ -2,8 +2,8 @@ CREATE TABLE course (
   id INTEGER PRIMARY KEY,
   name TEXT NOT NULL,
   desc TEXT NOT NULL,
-  start_date TEXT,
-  end_date TEXT
+  start_date TEXT NOT NULL,
+  end_date TEXT NOT NULL
 );
 
 CREATE TABLE child (

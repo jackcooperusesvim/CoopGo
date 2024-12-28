@@ -29,6 +29,10 @@ func main() {
 	courseHandler := handler.CourseHandler{}
 
 	app.GET("/course", courseHandler.HandleCourseShow)
+	app.GET("/course/edit/:id", courseHandler.HandleCourseEdit)
 
-	app.Start("localhost:3000")
+	log.Println("app created")
+	err = app.Start("localhost:4321")
+	log.Println("app ended on error:")
+	log.Println(err)
 }

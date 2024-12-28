@@ -26,3 +26,8 @@ func (h CourseHandler) HandleCourseShow(c echo.Context) error {
 	}
 	return render(c, course.List(courses))
 }
+
+func (h CourseHandler) HandleCourseEdit(c echo.Context) error {
+	log.Println(c.Request().Form)
+	return render(c, course.Base())
+}

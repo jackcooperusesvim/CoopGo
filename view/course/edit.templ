@@ -1,0 +1,24 @@
+package course
+
+import (
+"github.com/jackcooperusesvim/coopGo/model/sqlgen"
+"github.com/jackcooperusesvim/coopGo/view/layout"
+)
+
+templ Edit(course sqlgen.Course) {
+@layout.Base() {
+<h2>course#List</h2>
+@Form(course)
+}
+}
+
+templ Form(course sqlgen.Course) {
+<form action="/course/create" method="POST">
+	<input type="hidden" id="name" value={ string(course.ID) } />
+	<input type="text" id="name" value={ course.Name } />
+	<input type="text" id="desc" value={ course.Desc } />
+	<input type="text" id="start_date" value={ course.StartDate.String } />
+	<input type="text" id="end_date" value={ course.EndDate.String } />
+	<input type="submit" />
+</form>
+}

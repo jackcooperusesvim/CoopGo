@@ -5,21 +5,26 @@ WHERE id = ? LIMIT 1;
 -- name: ListFamilies :many
 SELECT * FROM family;
 
--- name: CreateCourse :one
-INSERT INTO course (
-	name,
-	desc,
-	start_date,
-	end_date
-) VALUES(
-	?, ?, ?, ?
-) RETURNING *;
+-- name: CreateFamily :one
+INSERT INTO family(
+	last_name,
+	main_parent,
+	sec_parent,
+	phone1,
+	phone2,
+	phone3
+) VALUES(?, ?, ?, ?, ?, ?) RETURNING *;
 
--- name: UpdateCourse :one
-UPDATE course
-set name = ?, desc = ?, start_date = ?, end_date = ?
+-- name: UpdateFamilyMeta :one
+UPDATE family
+set last_name= ?, 
+main_parent= ?, 
+sec_parent= ?, 
+phone1= ?,
+phone2= ?,
+phone3= ?
 WHERE id = ?
 RETURNING *;
 
--- name: DeleteCourse :exec
-DELETE FROM course WHERE id = ?;
+-- name: DeleteFamily :exec
+DELETE FROM family WHERE id = ?;

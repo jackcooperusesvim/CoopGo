@@ -21,8 +21,8 @@ type Course struct {
 	ID        int64
 	Name      string
 	Desc      string
-	StartDate sql.NullString
-	EndDate   sql.NullString
+	StartDate string
+	EndDate   string
 }
 
 type Coursejoinchild struct {

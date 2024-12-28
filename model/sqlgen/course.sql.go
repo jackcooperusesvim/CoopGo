@@ -7,7 +7,6 @@ package sqlgen
 
 import (
 	"context"
-	"database/sql"
 )
 
 const createCourse = `-- name: CreateCourse :one
@@ -24,8 +23,8 @@ INSERT INTO course (
 type CreateCourseParams struct {
 	Name      string
 	Desc      string
-	StartDate sql.NullString
-	EndDate   sql.NullString
+	StartDate string
+	EndDate   string
 }
 
 func (q *Queries) CreateCourse(ctx context.Context, arg CreateCourseParams) (Course, error) {
@@ -116,8 +115,8 @@ RETURNING id, name, "desc", start_date, end_date
 type UpdateCourseParams struct {
 	Name      string
 	Desc      string
-	StartDate sql.NullString
-	EndDate   sql.NullString
+	StartDate string
+	EndDate   string
 	ID        int64
 }
 

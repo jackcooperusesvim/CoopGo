@@ -1,9 +1,33 @@
 package course
 
-import "github.com/jackcooperusesvim/coopGo/view/layout"
+import (
+"github.com/jackcooperusesvim/coopGo/model/sqlgen"
+"github.com/jackcooperusesvim/coopGo/view/layout"
+)
 
-templ Show() {
+templ Show(courses []sqlgen.Course) {
 @layout.Base() {
-<h1>course#Show</h1>
+<h2>course#Show</h2>
+<table>
+	<tr>
+		<th>Name</th>
+		<th>Description</th>
+		<th>Start Date</th>
+		<th>End Date</th>
+	</tr>
+	for _, course := range courses {
+	<tr>
+		<td>{ course.Name }</td>
+		<td>{ course.Desc }</td>
+		<td>{ course.StartDate.String }</td>
+		<td>{ course.EndDate.String }</td>
+	</tr>
+	}
+	<tr></tr>
+</table>
+<th></th>
 }
+}
+
+templ GraphSingle(course sqlgen.Course) {
 }

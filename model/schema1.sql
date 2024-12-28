@@ -1,4 +1,4 @@
-CREATE TABLE Class (
+CREATE TABLE Course (
 	id INTEGER PRIMARY KEY,
 
 	name TEXT UNIQUE NOT NULL,
@@ -7,17 +7,18 @@ CREATE TABLE Class (
 	start_date TEXT,
 	end_date TEXT,
 );
-CREATE TABLE ClassJoinChild(
+
+CREATE TABLE coursejoinchild(
 	id INTEGER PRIMARY KEY,
 
-	class_id INTEGER NOT NULL,
+	course_id INTEGER NOT NULL,
 	child_id INTEGER NOT NULL,
 
-	FOREIGN KEY (class) REFERENCES Class(id)
-	FOREIGN KEY (child) REFERENCES Child(id)
+	FOREIGN KEY (course_id) REFERENCES course(id)
+	FOREIGN KEY (child_id) REFERENCES child(id)
 );
 
-CREATE TABLE Family (
+CREATE TABLE family (
 	id INTEGER PRIMARY KEY,
 
 	last_name TEXT NOT NULL,
@@ -31,7 +32,7 @@ CREATE TABLE Family (
 	phone3 TEXT,
 );
 
-CREATE TABLE Child (
+CREATE TABLE child (
 	id INTEGER PRIMARY KEY,
 
 	first_name TEXT NOT NULL,
@@ -41,5 +42,5 @@ CREATE TABLE Child (
 	grade_offset INTEGER NOT NULL,
 
 	family_id INTEGER,
-	FOREIGN KEY (family_id) REFERENCES Family(id)
+	FOREIGN KEY (family_id) REFERENCES family(id)
 );

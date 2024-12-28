@@ -14,12 +14,13 @@ type DB struct{}
 func main() {
 	err := model.CreateTables()
 
-	if err != nil {
-		log.Println(err)
-	}
-	err = model.BuildTables()
+	if err == nil {
+		err = model.BuildTables()
 
-	if err != nil {
+		if err != nil {
+			log.Println(err)
+		}
+	} else {
 		log.Println(err)
 	}
 

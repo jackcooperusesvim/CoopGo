@@ -37,7 +37,6 @@ type Family struct {
 	MainParent string
 	SecParent  string
 	Phone1     string
-	Phone1     string
 	Phone2     string
 	Phone3     sql.NullString
 }

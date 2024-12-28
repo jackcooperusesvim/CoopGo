@@ -1,33 +1,43 @@
 package course
 
 import (
-"github.com/jackcooperusesvim/coopGo/model/sqlgen"
-"github.com/jackcooperusesvim/coopGo/view/layout"
+	"github.com/jackcooperusesvim/coopGo/model/sqlgen"
+	"github.com/jackcooperusesvim/coopGo/view/layout"
 )
 
-templ Show(courses []sqlgen.Course) {
-@layout.Base() {
-<h2>course#Show</h2>
-<table>
-	<tr>
-		<th>Name</th>
-		<th>Description</th>
-		<th>Start Date</th>
-		<th>End Date</th>
-	</tr>
-	for _, course := range courses {
-	<tr>
-		<td>{ course.Name }</td>
-		<td>{ course.Desc }</td>
-		<td>{ course.StartDate.String }</td>
-		<td>{ course.EndDate.String }</td>
-	</tr>
+templ List(courses []sqlgen.Course) {
+	@layout.Base() {
+		<h2>course#List</h2>
+		<table>
+			<tr>
+				<th>Name</th>
+				<th>Description</th>
+				<th>Start Date</th>
+				<th>End Date</th>
+			</tr>
+			for _, course := range courses {
+				<tr>
+					<td>{ course.Name }</td>
+					<td>{ course.Desc }</td>
+					<td>{ course.StartDate.String }</td>
+					<td>{ course.EndDate.String }</td>
+					<td>
+						<a>click</a>
+					</td>
+				</tr>
+			}
+			<tr></tr>
+		</table>
+		<th></th>
 	}
-	<tr></tr>
-</table>
-<th></th>
-}
 }
 
-templ GraphSingle(course sqlgen.Course) {
+templ Form(course sqlgen.Course) {
+	<form>
+		<input type="hidden" id="name" value={ string(course.ID) }/>
+		<input type="text" id="name"/>
+		<input type="text" id="desc"/>
+		<input type="text" id="start_date"/>
+		<input type="text" id="end_date"/>
+	</form>
 }

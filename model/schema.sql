@@ -37,7 +37,6 @@ CREATE TABLE family (
 	sec_parent TEXT NOT NULL,
 
 	phone1 TEXT NOT NULL,
-	phone1 TEXT NOT NULL,
 	phone2 TEXT NOT NULL,
 
 	phone3 TEXT

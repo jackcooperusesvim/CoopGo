@@ -34,6 +34,7 @@ func main() {
 	app.GET("/course", courseHandler.HandleCourseShow)
 	app.GET("/course/edit/:id", courseHandler.HandleCourseEdit)
 	app.POST("/course/create", courseHandler.HandleCoursePost)
+	app.POST("/course/delete", courseHandler.HandleCourseDelete)
 
 	log.Println("app created")
 	err = app.Start("localhost:4321")

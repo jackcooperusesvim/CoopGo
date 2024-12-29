@@ -14,7 +14,14 @@ templ Edit(course sqlgen.Course) {
 }
 
 templ Form(course sqlgen.Course) {
-<form action="/course/create" method="POST">
+<form hx-boost="true" action="/course/delete" method="POST">
+	<input type="hidden" id="id" name="id" value={ strconv.Itoa(int(course.ID)) } />
+	<input type="submit" value="Delete Record" />
+</form>
+<br />
+<button onClick="window.location.reload();">Reset</button>
+<br />
+<form hx-boost="true" action="/course/create" method="POST">
 	<input type="hidden" id="id" name="id" value={ strconv.Itoa(int(course.ID)) } />
 	<label for="name">name</label>
 	<br />
@@ -32,6 +39,6 @@ templ Form(course sqlgen.Course) {
 	<br />
 	<input type="text" id="end_date" name="end_date" value={ course.EndDate } />
 	<br />
-	<input type="submit" />
+	<input type="submit" value="Submit Record" />
 </form>
 }

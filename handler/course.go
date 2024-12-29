@@ -3,10 +3,12 @@ package handler
 import (
 	"errors"
 	"log"
+	"net/http"
 	"strconv"
 	"strings"
 
 	"github.com/jackcooperusesvim/coopGo/model"
+	"github.com/jackcooperusesvim/coopGo/model/sqlgen"
 	"github.com/jackcooperusesvim/coopGo/view/course"
 	"github.com/labstack/echo/v4"
 )
@@ -39,8 +41,6 @@ func (h CourseHandler) HandleCourseEdit(c echo.Context) error {
 
 		if len(split_id) == 2 {
 			id, err = strconv.Atoi(split_id[1])
-			log.Println("id:")
-			log.Println(id)
 			if err != nil {
 				return err
 			}
@@ -48,11 +48,8 @@ func (h CourseHandler) HandleCourseEdit(c echo.Context) error {
 	} else {
 		return errors.New("No id provided")
 	}
-	log.Println("final_id:")
-	log.Println(id)
 
 	if err != nil {
-		log.Println(err)
 		return err
 	}
 
@@ -78,16 +75,7 @@ type CourseForm struct {
 	EndDate   string `form:"end_date"`
 }
 
-func (h CourseHandler) HandleCoursePost(c echo.Context) (err error) {
-
-	r := c.Request()
-	log.Println(r)
-
-	err = r.ParseForm()
-	if err != nil {
-		return err
-	}
-	log.Println(r.ParseForm())
+func (h CourseHandler) HandleCourseDelete(c echo.Context) (err error) {
 
 	cf := new(CourseForm)
 	if err := c.Bind(cf); err != nil {
@@ -95,7 +83,61 @@ func (h CourseHandler) HandleCoursePost(c echo.Context) (err error) {
 	}
 	log.Println(cf)
 
-	c.Response().Header().Set("HX-Redirect", "/course")
+	q, ctx, err := model.DbInfo()
 
-	return redirect_home(c)
+	if err != nil {
+		return err
+	}
+
+	id, err := strconv.Atoi(cf.id)
+	if err != nil {
+		return err
+	}
+	err = q.DeleteCourse(ctx, int64(id))
+
+	c.Response().Header().Set("HX-Redirect", "/course")
+	if err != nil {
+		c.NoContent(http.StatusInternalServerError) // No body needed
+		return err
+	} else {
+		return c.NoContent(http.StatusOK) // No body needed
+	}
+
+}
+
+func (h CourseHandler) HandleCoursePost(c echo.Context) (err error) {
+
+	cf := new(CourseForm)
+	if err := c.Bind(cf); err != nil {
+		return err
+	}
+	log.Println(cf)
+
+	q, ctx, err := model.DbInfo()
+
+	if err != nil {
+		return err
+	}
+
+	ucp := sqlgen.UpdateCourseParams{}
+
+	id, err := strconv.Atoi(cf.id)
+	if err != nil {
+		return err
+	}
+	ucp.ID = int64(id)
+	ucp.Name = cf.Name
+	ucp.Desc = cf.Desc
+	ucp.StartDate = cf.StartDate
+	ucp.EndDate = cf.EndDate
+
+	_, err = q.UpdateCourse(ctx, ucp)
+
+	c.Response().Header().Set("HX-Redirect", "/course")
+	if err != nil {
+		c.NoContent(http.StatusInternalServerError) // No body needed
+		return err
+	} else {
+		return c.NoContent(http.StatusOK) // No body needed
+	}
 }

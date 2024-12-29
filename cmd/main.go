@@ -12,6 +12,7 @@ import (
 type DB struct{}
 
 func main() {
+
 	err := model.CreateTables()
 
 	if err == nil {

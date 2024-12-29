@@ -40,8 +40,8 @@ func BuildTables() error {
 		_, err := q.CreateCourse(ctx, sqlgen.CreateCourseParams{
 			Name:      names[i],
 			Desc:      desc[i],
-			StartDate: sql.NullString{String: start_date[i], Valid: true},
-			EndDate:   sql.NullString{String: end_date[i], Valid: true},
+			StartDate: start_date[i],
+			EndDate:   end_date[i],
 		})
 
 		if err != nil {

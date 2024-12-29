@@ -20,8 +20,8 @@ templ List(courses []sqlgen.Course) {
 	<tr>
 		<td>{ course.Name }</td>
 		<td>{ course.Desc }</td>
-		<td>{ course.StartDate.String }</td>
-		<td>{ course.EndDate.String }</td>
+		<td>{ course.StartDate }</td>
+		<td>{ course.EndDate }</td>
 		<td>
 			<a href={ templ.SafeURL(fmt.Sprintf("/course/edit/:id=%v", course.ID)) }>edit</a>
 		</td>

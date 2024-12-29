@@ -2,6 +2,7 @@ package handler
 
 import (
 	"log"
+	"strconv"
 
 	"github.com/jackcooperusesvim/coopGo/model"
 	"github.com/jackcooperusesvim/coopGo/view/course"
@@ -28,6 +29,25 @@ func (h CourseHandler) HandleCourseShow(c echo.Context) error {
 }
 
 func (h CourseHandler) HandleCourseEdit(c echo.Context) error {
-	log.Println(c.Request().Form)
-	return render(c, course.Base())
+	id, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	q, ctx, err := model.DbInfo()
+
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	rel_course, err := q.GetCourse(ctx, int64(id))
+
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	return render(c, course.Edit(rel_course))
 }

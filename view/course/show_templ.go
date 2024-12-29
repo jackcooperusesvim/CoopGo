@@ -83,9 +83,9 @@ func List(courses []sqlgen.Course) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var5 string
-				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(course.StartDate.String)
+				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(course.StartDate)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/course/show.templ`, Line: 23, Col: 31}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/course/show.templ`, Line: 23, Col: 24}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
@@ -96,9 +96,9 @@ func List(courses []sqlgen.Course) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var6 string
-				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(course.EndDate.String)
+				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(course.EndDate)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/course/show.templ`, Line: 24, Col: 29}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/course/show.templ`, Line: 24, Col: 22}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {

@@ -76,12 +76,13 @@ type CourseForm struct {
 }
 
 func (h CourseHandler) HandleCourseDelete(c echo.Context) (err error) {
+	log.Println("FormParams:")
+	log.Println(c.FormParams())
 
-	cf := new(CourseForm)
-	if err := c.Bind(cf); err != nil {
+	id, err := strconv.Atoi(c.FormValue("id"))
+	if err != nil {
 		return err
 	}
-	log.Println(cf)
 
 	q, ctx, err := model.DbInfo()
 
@@ -89,10 +90,6 @@ func (h CourseHandler) HandleCourseDelete(c echo.Context) (err error) {
 		return err
 	}
 
-	id, err := strconv.Atoi(cf.id)
-	if err != nil {
-		return err
-	}
 	err = q.DeleteCourse(ctx, int64(id))
 
 	c.Response().Header().Set("HX-Redirect", "/course")
@@ -107,11 +104,8 @@ func (h CourseHandler) HandleCourseDelete(c echo.Context) (err error) {
 
 func (h CourseHandler) HandleCoursePost(c echo.Context) (err error) {
 
-	cf := new(CourseForm)
-	if err := c.Bind(cf); err != nil {
-		return err
-	}
-	log.Println(cf)
+	log.Println("FormParams:")
+	log.Println(c.FormParams())
 
 	q, ctx, err := model.DbInfo()
 
@@ -121,19 +115,55 @@ func (h CourseHandler) HandleCoursePost(c echo.Context) (err error) {
 
 	ucp := sqlgen.UpdateCourseParams{}
 
-	id, err := strconv.Atoi(cf.id)
+	id, err := strconv.Atoi(c.FormValue("id"))
 	if err != nil {
 		return err
 	}
 	ucp.ID = int64(id)
-	ucp.Name = cf.Name
-	ucp.Desc = cf.Desc
-	ucp.StartDate = cf.StartDate
-	ucp.EndDate = cf.EndDate
+	ucp.Name = c.FormValue("name")
+	ucp.Desc = c.FormValue("desc")
+	ucp.StartDate = c.FormValue("start_date")
+	ucp.EndDate = c.FormValue("end_date")
 
-	_, err = q.UpdateCourse(ctx, ucp)
+	crs, err := q.UpdateCourse(ctx, ucp)
+	log.Println(crs.EndDate)
 
 	c.Response().Header().Set("HX-Redirect", "/course")
+	if err != nil {
+		c.NoContent(http.StatusInternalServerError) // No body needed
+		return err
+	} else {
+		return c.NoContent(http.StatusOK) // No body needed
+	}
+}
+
+func (h CourseHandler) HandleCourseNew(c echo.Context) error {
+	crs := sqlgen.Course{
+		ID:        -123,
+		Name:      "",
+		Desc:      "",
+		StartDate: "",
+		EndDate:   "",
+	}
+	return render(c, course.New(crs))
+}
+func (h CourseHandler) HandleCourseCreate(c echo.Context) error {
+	ucp := sqlgen.CreateCourseParams{}
+	q, ctx, err := model.DbInfo()
+
+	if err != nil {
+		return err
+	}
+
+	ucp.Name = c.FormValue("name")
+	ucp.Desc = c.FormValue("desc")
+	ucp.StartDate = c.FormValue("start_date")
+	ucp.EndDate = c.FormValue("end_date")
+
+	_, err = q.CreateCourse(ctx, ucp)
+
+	c.Response().Header().Set("HX-Redirect", "/course")
+
 	if err != nil {
 		c.NoContent(http.StatusInternalServerError) // No body needed
 		return err

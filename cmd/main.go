@@ -29,9 +29,15 @@ func main() {
 	app := echo.New()
 
 	//Various Middlewares
-	app.Use(middleware.CSRF())
-	app.Use(middleware.Secure())
 	app.Use(middleware.Logger())
+	app.Use(middleware.CSRFWithConfig(
+		middleware.CSRFConfig{
+			Skipper:     middleware.DefaultSkipper,
+			TokenLength: 32,
+			TokenLookup: "form:csrf",
+			ContextKey:  "csrf",
+		}))
+	app.Use(middleware.Secure())
 
 	courseHandler := handler.CourseHandler{}
 

@@ -1,72 +1,69 @@
 package course
 
 import (
-	"github.com/jackcooperusesvim/coopGo/model/sqlgen"
-	"github.com/jackcooperusesvim/coopGo/view/layout"
-	"strconv"
+"github.com/jackcooperusesvim/coopGo/model/sqlgen"
+"github.com/jackcooperusesvim/coopGo/view/layout"
+"strconv"
 )
 
-templ Edit(course sqlgen.Course) {
-	@layout.Base() {
-		<h2>Edit Course</h2>
-		@EditForm(course, false)
-	}
+templ Edit(course sqlgen.Course, csrf string) {
+@layout.Base() {
+<h2>Edit Course</h2>
+@EditForm(course, csrf, false)
+}
 }
 
-templ New(course sqlgen.Course) {
-	@layout.Base() {
-		<h2>New Course</h2>
-		@CreateForm(course)
-	}
+templ New(course sqlgen.Course, csrf string) {
+@layout.Base() {
+<h2>New Course</h2>
+@CreateForm(course, csrf)
+}
 }
 
 templ MenuButton() {
-	<form action="/course" method="GET">
-		<button href="/course">
-			Back to
-			Courses
-		</button>
+<form action="/course" method="GET">
+	<button href="/course">
+		Back to
+		Courses
+	</button>
+</form>
+}
+
+templ EditForm(course sqlgen.Course, csrf string, is_new bool) {
+<section class="tool-bar">
+	<button onClick="window.location.reload();">Reset Fields</button>
+	<form hx-confirm="Are you sure you wish to delete this course?" hx-boost="true" action="/course/delete"
+		method="POST">
+		<input type="hidden" id="id" name="id" value={ strconv.Itoa(int(course.ID)) } />
+		<input type="submit" value="Delete Record" />
 	</form>
-}
-
-templ EditForm(course sqlgen.Course, is_new bool) {
-	<section class="tool-bar">
-		<button onClick="window.location.reload();">Reset Fields</button>
-		<form
-			hx-confirm="Are you sure you wish to delete this course?"
-			hx-boost="true"
-			action="/course/delete"
-			method="POST"
-		>
-			<input type="hidden" id="id" name="id" value={ strconv.Itoa(int(course.ID)) }/>
-			<input type="submit" value="Delete Record"/>
-		</form>
-		<hr aria-orientation="vertical"/>
-		@MenuButton()
-	</section>
-	<div>
-		<form hx-boost="true" action="/course/update" method="POST">
-			@FormInputs(course)
-		</form>
-	</div>
-}
-
-templ CreateForm(course sqlgen.Course) {
+	<hr aria-orientation="vertical" />
 	@MenuButton()
-	<form hx-boost="true" action="/course/create" method="POST">
-		@FormInputs(course)
+</section>
+<div>
+	<form hx-boost="true" action="/course/update" method="POST">
+		@FormInputs(course, csrf)
 	</form>
+</div>
 }
 
-templ FormInputs(course sqlgen.Course) {
-	<input type="hidden" id="id" name="id" value={ strconv.Itoa(int(course.ID)) }/>
-	<label for="name">name</label>
-	<input type="text" id="name" name="name" value={ course.Name }/>
-	<label for="desc">desc</label>
-	<input type="textbox" id="desc" name="desc" value={ course.Desc }/>
-	<label for="start_date">start_date</label>
-	<input type="date" id="start_date" name="start_date" value={ course.StartDate }/>
-	<label for="end_date">end_date</label>
-	<input type="date" id="end_date" name="end_date" value={ course.EndDate }/>
-	<input type="submit" value="Submit Record"/>
+templ CreateForm(course sqlgen.Course, csrf string) {
+@MenuButton()
+<form hx-boost="true" action="/course/create" method="POST">
+	@FormInputs(course, csrf)
+</form>
+}
+
+templ FormInputs(course sqlgen.Course, csrf string) {
+<input type="hidden" id="id" name="id" value={ strconv.Itoa(int(course.ID)) } />
+<input type="hidden" id="csrf" name="csrf" value={ csrf } />
+<label for="name">name</label>
+<input type="text" id="name" name="name" value={ course.Name } />
+<label for="desc">desc</label>
+<input type="textbox" id="desc" name="desc" value={ course.Desc } />
+<label for="start_date">start_date</label>
+<input type="date" id="start_date" name="start_date" value={ course.StartDate } />
+<label for="end_date">end_date</label>
+<input type="date" id="end_date" name="end_date" value={ course.EndDate } />
+<input type="submit" value="Submit Record" />
 }

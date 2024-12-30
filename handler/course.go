@@ -64,7 +64,15 @@ func (h CourseHandler) HandleCourseEdit(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	return render(c, course.Edit(rel_course))
+
+	csrf, ok := c.Get("csrf").(string)
+	if !ok {
+		return errors.New("csrf token is messed up")
+	}
+	if csrf == "" {
+		return errors.New("csrf token not accessible to handler")
+	}
+	return render(c, course.Edit(rel_course, csrf))
 }
 
 type CourseForm struct {
@@ -145,7 +153,19 @@ func (h CourseHandler) HandleCourseNew(c echo.Context) error {
 		StartDate: "",
 		EndDate:   "",
 	}
-	return render(c, course.New(crs))
+
+	log.Println(c.FormParams())
+	log.Println(c.ParamValues())
+	log.Println(c.Request().Context())
+	log.Println(c.Request().Context())
+	csrf, ok := c.Get("csrf").(string)
+	if !ok {
+		return errors.New("csrf token is messed up")
+	}
+	if csrf == "" {
+		return errors.New("csrf token not accessible to handler")
+	}
+	return render(c, course.New(crs, csrf))
 }
 func (h CourseHandler) HandleCourseCreate(c echo.Context) error {
 	ucp := sqlgen.CreateCourseParams{}

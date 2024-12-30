@@ -8,6 +8,15 @@ import (
 	"database/sql"
 )
 
+type Account struct {
+	ID                     int64
+	Email                  string
+	PasswordHash           string
+	DefaultSessionLifetime string
+	PriviledgeType         string
+	LastUpdated            string
+}
+
 type Child struct {
 	ID          int64
 	FirstName   string
@@ -39,4 +48,11 @@ type Family struct {
 	Phone1     string
 	Phone2     string
 	Phone3     sql.NullString
+}
+
+type Session struct {
+	ID                 int64
+	Token              string
+	ExpirationDatetime string
+	AccountID          int64
 }

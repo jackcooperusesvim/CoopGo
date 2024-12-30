@@ -41,3 +41,21 @@ CREATE TABLE family (
 
 	phone3 TEXT
 );
+
+CREATE TABLE account (
+	id INTEGER PRIMARY KEY,
+	email TEXT NOT NULL,
+	password_hash TEXT NOT NULL,
+
+	default_session_lifetime TEXT NOT NULL,
+	priviledge_type TEXT NOT NULL,
+	last_updated TEXT NOT NULL
+);
+
+CREATE TABLE session (
+	id INTEGER PRIMARY KEY,
+	token TEXT UNIQUE NOT NULL,
+	expiration_datetime TEXT NOT NULL,
+	account_id INTEGER NOT NULL,
+	FOREIGN KEY (account_id) REFERENCES account(id)
+);

@@ -5,6 +5,10 @@ import "github.com/jackcooperusesvim/coopGo/view/layout"
 templ AdminForm() {
 	@layout.Base() {
 		<h2>Log In</h2>
+		<form class="table rows">
+			<input type="email" id="email" name="email"/>
+			<input type="password" id="pass" name="pass"/>
+		</form>
 	}
 }
 

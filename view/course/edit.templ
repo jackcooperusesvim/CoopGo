@@ -58,12 +58,12 @@ templ FormInputs(course sqlgen.Course, csrf string) {
 <input type="hidden" id="id" name="id" value={ strconv.Itoa(int(course.ID)) } />
 <input type="hidden" id="csrf" name="csrf" value={ csrf } />
 <label for="name">name</label>
-<input type="text" id="name" name="name" value={ course.Name } />
+<input required type="text" id="name" name="name" value={ course.Name } />
 <label for="desc">desc</label>
-<input type="textbox" id="desc" name="desc" value={ course.Desc } />
+<input required type="text" id="desc" name="desc" value={ course.Desc } />
 <label for="start_date">start_date</label>
-<input type="date" id="start_date" name="start_date" value={ course.StartDate } />
+<input required type="date" id="start_date" name="start_date" value={ course.StartDate } />
 <label for="end_date">end_date</label>
-<input type="date" id="end_date" name="end_date" value={ course.EndDate } />
+<input required type="date" id="end_date" name="end_date" value={ course.EndDate } />
 <input type="submit" value="Submit Record" />
 }

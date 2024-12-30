@@ -30,45 +30,52 @@ templ MenuButton() {
 }
 
 templ EditForm(course sqlgen.Course, is_new bool) {
-	<form hx-confirm="Are you sure you wish to delete this course?" hx-boost="true" action="/course/delete" method="POST">
-		<input type="hidden" id="id" name="id" value={ strconv.Itoa(int(course.ID)) }/>
-		<input type="submit" value="Delete Record"/>
-	</form>
-	<br/>
-	@MenuButton()
-	<br/>
-	<button onClick="window.location.reload();">Reset</button>
-	<br/>
-	<form hx-boost="true" action="/course/update" method="POST">
-		@FormInputs(course)
-	</form>
+	<section class="tool-bar">
+		<button onClick="window.location.reload();">Reset Fields</button>
+		<form
+			hx-confirm="Are you sure you wish to delete this course?"
+			hx-boost="true"
+			action="/course/delete"
+			method="POST"
+		>
+			<input type="hidden" id="id" name="id" value={ strconv.Itoa(int(course.ID)) }/>
+			<input type="submit" value="Delete Record"/>
+		</form>
+		<hr aria-orientation="vertical"/>
+		@MenuButton()
+	</section>
+	<div>
+		<form hx-boost="true" action="/course/update" method="POST">
+			@FormInputs(course)
+		</form>
+	</div>
 }
 
 templ CreateForm(course sqlgen.Course) {
 	@MenuButton()
-	<br/>
 	<form hx-boost="true" action="/course/create" method="POST">
-		@FormInputs(course)
+		<input type="hidden" id="id" name="id" value={ strconv.Itoa(int(course.ID)) }/>
+		<label for="name">name</label>
+		<input type="text" id="name" name="name" value={ course.Name }/>
+		<label for="desc">desc</label>
+		<input type="text" id="desc" name="desc" value={ course.Desc }/>
+		<label for="start_date">start_date</label>
+		<input type="date" id="start_date" name="start_date"/>
+		<label for="end_date">end_date</label>
+		<input type="date" id="end_date" name="end_date"/>
+		<input type="submit" value="Submit Record"/>
 	</form>
 }
 
 templ FormInputs(course sqlgen.Course) {
 	<input type="hidden" id="id" name="id" value={ strconv.Itoa(int(course.ID)) }/>
 	<label for="name">name</label>
-	<br/>
 	<input type="text" id="name" name="name" value={ course.Name }/>
-	<br/>
 	<label for="desc">desc</label>
-	<br/>
 	<input type="text" id="desc" name="desc" value={ course.Desc }/>
-	<br/>
 	<label for="start_date">start_date</label>
-	<br/>
-	<input type="text" id="start_date" name="start_date" value={ course.StartDate }/>
-	<br/>
+	<input type="date" id="start_date" name="start_date" value={ course.StartDate }/>
 	<label for="end_date">end_date</label>
-	<br/>
-	<input type="text" id="end_date" name="end_date" value={ course.EndDate }/>
-	<br/>
+	<input type="date" id="end_date" name="end_date" value={ course.EndDate }/>
 	<input type="submit" value="Submit Record"/>
 }

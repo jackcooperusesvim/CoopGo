@@ -1,36 +1,30 @@
 package layout
 
 templ Base() {
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
-	<title>My Website</title>
-	<script src="https://unpkg.com/htmx.org@2.0.4/dist/htmx.js"
-		integrity="sha384-oeUn82QNXPuVkGCkcrInrS1twIxKhkZiFfr2TdiuObZ3n3yIeMiqcRzkIcguaof1"
-		crossorigin="anonymous"></script>
-</head>
-
-<body>
-	<main>
-		<h1>CoopDb</h1>
-	</main>
-	{ children... }
-</body>
-
-</html>
+	<!DOCTYPE html>
+	<html class="-no-dark-theme" lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+			<title>My Website</title>
+			<link rel="stylesheet" href="https://unpkg.com/missing.css@1.1.3"/>
+			<script src="https://unpkg.com/htmx.org@2.0.4/dist/htmx.js" integrity="sha384-oeUn82QNXPuVkGCkcrInrS1twIxKhkZiFfr2TdiuObZ3n3yIeMiqcRzkIcguaof1" crossorigin="anonymous"></script>
+		</head>
+		<body>
+			<main>
+				<h1>CoopDb</h1>
+			</main>
+			{ children... }
+		</body>
+	</html>
 }
 
 templ Redirect(url string) {
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-	<meta http-equiv="refresh" content={ "0;url=" + url } />
-</head>
-
-</html>
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta http-equiv="refresh" content={ "0;url=" + url }/>
+		</head>
+	</html>
 }

@@ -30,8 +30,8 @@ func BuildTables() error {
 	q, ctx, err := DbInfo()
 	names := []string{"CompSci", "JavaScript", "Mathematics", "History", "Science"}
 	desc := []string{"Interesting, but sometimes boring", "Horrible", "Ok", "Nonononono", "Boring"}
-	start_date := []string{"12-30-2000", "12-30-2000", "12-30-2000", "12-30-2000", "12-30-2000"}
-	end_date := []string{"01-01-1999", "01-01-1999", "01-01-1999", "01-01-1999", "01-01-1999"}
+	start_date := []string{"2000-12-30", "2000-12-30", "2000-12-30", "2000-12-30", "2000-12-30"}
+	end_date := []string{"1999-01-01", "1999-01-01", "1999-01-01", "1999-01-01", "1999-01-01"}
 
 	if err != nil {
 		return err

@@ -27,6 +27,10 @@ func main() {
 	}
 
 	app := echo.New()
+
+	//Various Middlewares
+	app.Use(middleware.CSRF())
+	app.Use(middleware.Secure())
 	app.Use(middleware.Logger())
 
 	courseHandler := handler.CourseHandler{}

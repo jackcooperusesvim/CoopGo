@@ -47,9 +47,10 @@ CREATE TABLE account (
 	email TEXT NOT NULL,
 	password_hash TEXT NOT NULL,
 
-	default_session_lifetime TEXT NOT NULL,
 	priviledge_type TEXT NOT NULL,
-	last_updated TEXT NOT NULL
+	last_updated TEXT NOT NULL,
+	family_id INTEGER,
+	FOREIGN KEY (family_id) REFERENCES family(id)
 );
 
 CREATE TABLE session (

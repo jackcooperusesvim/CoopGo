@@ -9,12 +9,12 @@ import (
 )
 
 type Account struct {
-	ID                     int64
-	Email                  string
-	PasswordHash           string
-	DefaultSessionLifetime string
-	PriviledgeType         string
-	LastUpdated            string
+	ID             int64
+	Email          string
+	PasswordHash   string
+	PriviledgeType string
+	LastUpdated    string
+	FamilyID       sql.NullInt64
 }
 
 type Child struct {

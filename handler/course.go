@@ -16,6 +16,7 @@ import (
 type CourseHandler struct{}
 
 func (h CourseHandler) HandleCourseShow(c echo.Context) error {
+	log.Println("HandleCourseShow")
 	q, ctx, err := model.DbInfo()
 
 	if err != nil {
@@ -84,9 +85,7 @@ type CourseForm struct {
 }
 
 func (h CourseHandler) HandleCourseDelete(c echo.Context) (err error) {
-	log.Println("FormParams:")
-	log.Println(c.FormParams())
-
+	log.Println("HandleCourseDelete")
 	id, err := strconv.Atoi(c.FormValue("id"))
 	if err != nil {
 		return err
@@ -112,9 +111,6 @@ func (h CourseHandler) HandleCourseDelete(c echo.Context) (err error) {
 
 func (h CourseHandler) HandleCoursePost(c echo.Context) (err error) {
 
-	log.Println("FormParams:")
-	log.Println(c.FormParams())
-
 	q, ctx, err := model.DbInfo()
 
 	if err != nil {
@@ -133,8 +129,7 @@ func (h CourseHandler) HandleCoursePost(c echo.Context) (err error) {
 	ucp.StartDate = c.FormValue("start_date")
 	ucp.EndDate = c.FormValue("end_date")
 
-	crs, err := q.UpdateCourse(ctx, ucp)
-	log.Println(crs.EndDate)
+	_, err = q.UpdateCourse(ctx, ucp)
 
 	c.Response().Header().Set("HX-Redirect", "/course")
 	if err != nil {
@@ -146,6 +141,7 @@ func (h CourseHandler) HandleCoursePost(c echo.Context) (err error) {
 }
 
 func (h CourseHandler) HandleCourseNew(c echo.Context) error {
+	log.Println("HandleCourseNew")
 	crs := sqlgen.Course{
 		ID:        -123,
 		Name:      "",
@@ -154,10 +150,6 @@ func (h CourseHandler) HandleCourseNew(c echo.Context) error {
 		EndDate:   "",
 	}
 
-	log.Println(c.FormParams())
-	log.Println(c.ParamValues())
-	log.Println(c.Request().Context())
-	log.Println(c.Request().Context())
 	csrf, ok := c.Get("csrf").(string)
 	if !ok {
 		return errors.New("csrf token is messed up")
@@ -168,6 +160,7 @@ func (h CourseHandler) HandleCourseNew(c echo.Context) error {
 	return render(c, course.New(crs, csrf))
 }
 func (h CourseHandler) HandleCourseCreate(c echo.Context) error {
+	log.Println("HandleCourseCreate")
 	ucp := sqlgen.CreateCourseParams{}
 	q, ctx, err := model.DbInfo()
 

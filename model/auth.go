@@ -1,3 +1,5 @@
 package model
 
-import ()
+import (
+// "github.com/jackcooperusesvim/coopGo/model/sqlgen"
+)

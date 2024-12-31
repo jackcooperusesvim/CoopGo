@@ -19,7 +19,7 @@ func NewACL() *ACL {
 
 func (m *ACL) Restrict(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		priv := c.Get("privledge_level")
+		priv := c.Get("privledge_level").(string)
 		for _, group := range m.AuthGroups {
 			if group == priv {
 				return next(c)

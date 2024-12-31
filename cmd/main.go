@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/jackcooperusesvim/coopGo/handler"
-	// cm "github.com/jackcooperusesvim/coopGo/middleware"
+	cm "github.com/jackcooperusesvim/coopGo/middleware"
 	"github.com/jackcooperusesvim/coopGo/model"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -39,9 +39,9 @@ func main() {
 		}))
 	app.Use(middleware.Secure())
 
-	courseHandler := &handler.CourseHandler{}
+	courseHandler := handler.CourseHandler{}
 
-	AuthHandler := &handler.AuthHandler{}
+	AuthHandler := handler.AuthHandler{}
 	// adminACL := &cm.ACL{
 	// 	AuthGroups: []string{"admin"},
 	// }
@@ -50,7 +50,7 @@ func main() {
 	app.POST("/family/login", AuthHandler.Login)
 	app.POST("/admin/login", AuthHandler.Login)
 
-	app.GET("/course", courseHandler.HandleCourseShow)
+	app.GET("/course", cm.BehindAuth(courseHandler.HandleCourseShow))
 	app.GET("/course/edit/:id", courseHandler.HandleCourseEdit)
 	app.GET("/course/new", courseHandler.HandleCourseNew)
 

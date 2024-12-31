@@ -12,12 +12,12 @@ import (
 
 type AuthHandler struct{}
 
-func (h *AuthHandler) AuthPage(c echo.Context) error {
+func (h AuthHandler) AuthPage(c echo.Context) error {
 	log.Println("AuthPage")
 	return render(c, auth.LoginPage(c.Get("csrf").(string)))
 }
 
-func (h *AuthHandler) Login(c echo.Context) error {
+func (h AuthHandler) Login(c echo.Context) error {
 	log.Println("AuthPage")
 	email := c.FormValue("email")
 	password := c.FormValue("password")

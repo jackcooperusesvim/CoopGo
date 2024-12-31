@@ -72,7 +72,7 @@ func Login(email, password string) (token, privledge_level string, account_id in
 	if err != nil {
 		return "", "", 0, err
 	}
-	token_row, err := q.ValidateSessionToken(ctx, token)
+	token_row, err := q.ValidateSessionToken(ctx, token_hash)
 
 	if err != nil {
 		return "", "", 0, err

@@ -3,8 +3,9 @@ package middleware
 import (
 	"errors"
 
-	"github.com/jackcooperusesvim/coopGo/model"
+	// "github.com/jackcooperusesvim/coopGo/model"
 	"github.com/labstack/echo/v4"
+	"log"
 )
 
 type ACL struct {
@@ -32,17 +33,19 @@ func (m *ACL) Restrict(next echo.HandlerFunc) echo.HandlerFunc {
 func BehindAuth(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		token_cookie, err := c.Cookie("session_token")
-		token := token_cookie.Name
-
-		priv, account_id, err := model.ValidateToken(token)
-
+		log.Println(token_cookie)
+		// token := token_cookie.Value
+		//
+		// priv, account_id, err := model.ValidateToken(token)
+		//
 		if err != nil {
+			log.Println(err)
 			return c.NoContent(401)
 		}
-
-		c.Set("privledge_level", priv)
-		c.Set("account_id", account_id)
-
+		//
+		// c.Set("privledge_level", priv)
+		// c.Set("account_id", account_id)
+		//
 		return next(c)
 
 	}

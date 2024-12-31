@@ -23,7 +23,9 @@ func (h AuthHandler) Login(c echo.Context) error {
 	password := c.FormValue("password")
 	token, _, _, err := model.Login(email, password)
 	if err != nil {
-		c.Response().Header().Set("HX-Redirect", "/course")
+		log.Println("auth")
+		// c.Response().Header().Set("HX-Redirect", "/course")
+		// This is where bad auth goes
 		return c.NoContent(401)
 	}
 
@@ -31,13 +33,15 @@ func (h AuthHandler) Login(c echo.Context) error {
 		Name:     "session_token",
 		Value:    token,
 		HttpOnly: true,
-		Secure:   false,
+		Secure:   true,
 		SameSite: http.SameSiteStrictMode,
 		Expires:  time.Now().AddDate(0, 0, 1),
 	})
+	log.Println("cookies")
+	log.Println(c.Cookies())
 
-	c.Response().Header().Set("HX-Redirect", "/course")
+	// c.Response().Header().Set("HX-Redirect", "/course")
 	//TODO: Send the user to the proper domain
 
-	return c.NoContent(200)
+	return c.HTML(200, "")
 }

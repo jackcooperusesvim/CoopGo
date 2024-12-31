@@ -70,21 +70,16 @@ const validateSessionToken = `-- name: ValidateSessionToken :one
 SELECT account.id, account.priviledge_type FROM session
 LEFT JOIN account
 ON account.id = session.account_id
-WHERE account.priviledge_type = ? AND session.token = ?
+WHERE session.token = ?
 `
-
-type ValidateSessionTokenParams struct {
-	PriviledgeType string
-	Token          string
-}
 
 type ValidateSessionTokenRow struct {
 	ID             sql.NullInt64
 	PriviledgeType sql.NullString
 }
 
-func (q *Queries) ValidateSessionToken(ctx context.Context, arg ValidateSessionTokenParams) (ValidateSessionTokenRow, error) {
-	row := q.db.QueryRowContext(ctx, validateSessionToken, arg.PriviledgeType, arg.Token)
+func (q *Queries) ValidateSessionToken(ctx context.Context, token string) (ValidateSessionTokenRow, error) {
+	row := q.db.QueryRowContext(ctx, validateSessionToken, token)
 	var i ValidateSessionTokenRow
 	err := row.Scan(&i.ID, &i.PriviledgeType)
 	return i, err

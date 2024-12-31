@@ -2,18 +2,28 @@ package auth
 
 import "github.com/jackcooperusesvim/coopGo/view/layout"
 
-templ AdminForm() {
+templ LoginPage() {
 @layout.Base() {
 <h2>Log In</h2>
-<form class="table rows">
-	<input required type="email" id="email" name="email" />
-	<input required type="password" id="pass" name="pass" />
-</form>
+<div role="tablist" aria-label="Sign In Options">
+	<button role="tab" aria-controls="family" aria-selected="true">Family</button>
+	<button role="tab" aria-controls="admin">Admin</button>
+</div>
+<div id="family" role="tabpanel">
+	<form class="table rows" hx-boost="true" action="/family/login" method="POST">
+		@LoginFormFields()
+	</form>
+</div>
+<div id="admin" role="tabpanel" hidden>
+	<form class="table rows" hx-boost="true" action="/admin/login" method="POST">
+		@LoginFormFields()
+	</form>
+</div>
 }
 }
 
-templ FamilyForm() {
-@layout.Base() {
-<h2>Log In</h2>
-}
+templ LoginFormFields() {
+<p><label for="email">Email</label> <input type="text" id="email" name="email" /></p>
+<p><label for="password">Password</label> <input type="password" id="password" name="password" /></p>
+<p><input type="submit" value="Login" /></p>
 }

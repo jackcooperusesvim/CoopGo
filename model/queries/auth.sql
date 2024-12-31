@@ -9,7 +9,7 @@ INSERT INTO session (token,expiration_datetime,account_id) VALUES (?,?,?) RETURN
 SELECT account.id, account.priviledge_type FROM session
 LEFT JOIN account
 ON account.id = session.account_id
-WHERE account.priviledge_type = ? AND session.token = ?;
+WHERE session.token = ?;
 
 -- name: UnsafeCreateAccount :one
 INSERT INTO account (email,password_hash, priviledge_type,last_updated) VALUES (?,?,?,CURRENT_TIMESTAMP) RETURNING *;

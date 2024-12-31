@@ -18,6 +18,7 @@ func main() {
 
 	if err == nil {
 		err = model.BuildTables()
+		//TODO: ADD DEFAULT ADMIN
 
 		if err != nil {
 			log.Println(err)
@@ -40,6 +41,19 @@ func main() {
 	app.Use(middleware.Secure())
 
 	courseHandler := handler.CourseHandler{}
+	pubAuthHandler := handler.AuthHandler{
+		PermissionGroups: []string{"all"},
+	}
+	familyAuthHandler := handler.AuthHandler{
+		PermissionGroups: []string{"family"},
+	}
+	adminAuthHandler := handler.AuthHandler{
+		PermissionGroups: []string{"admin"},
+	}
+
+	app.GET("/login", pubAuthHandler.AuthPage)
+	app.POST("/family/auth", familyAuthHandler.Auth)
+	app.POST("/admin/auth", adminAuthHandler.Auth)
 
 	app.GET("/course", courseHandler.HandleCourseShow)
 	app.GET("/course/edit/:id", courseHandler.HandleCourseEdit)

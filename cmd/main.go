@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/jackcooperusesvim/coopGo/handler"
+	// cm "github.com/jackcooperusesvim/coopGo/middleware"
 	"github.com/jackcooperusesvim/coopGo/model"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -18,8 +19,6 @@ func main() {
 
 	if err == nil {
 		err = model.BuildTables()
-		//TODO: ADD DEFAULT ADMIN
-
 		if err != nil {
 			log.Println(err)
 		}
@@ -40,20 +39,16 @@ func main() {
 		}))
 	app.Use(middleware.Secure())
 
-	courseHandler := handler.CourseHandler{}
-	pubAuthHandler := handler.AuthHandler{
-		PermissionGroups: []string{"all"},
-	}
-	familyAuthHandler := handler.AuthHandler{
-		PermissionGroups: []string{"family"},
-	}
-	adminAuthHandler := handler.AuthHandler{
-		PermissionGroups: []string{"admin"},
-	}
+	courseHandler := &handler.CourseHandler{}
 
-	app.GET("/login", pubAuthHandler.AuthPage)
-	app.POST("/family/auth", familyAuthHandler.Auth)
-	app.POST("/admin/auth", adminAuthHandler.Auth)
+	AuthHandler := &handler.AuthHandler{}
+	// adminACL := &cm.ACL{
+	// 	AuthGroups: []string{"admin"},
+	// }
+
+	app.GET("/login", AuthHandler.AuthPage)
+	app.POST("/family/login", AuthHandler.Login)
+	app.POST("/admin/login", AuthHandler.Login)
 
 	app.GET("/course", courseHandler.HandleCourseShow)
 	app.GET("/course/edit/:id", courseHandler.HandleCourseEdit)

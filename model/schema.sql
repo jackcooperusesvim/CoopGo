@@ -44,7 +44,7 @@ CREATE TABLE family (
 
 CREATE TABLE account (
 	id INTEGER PRIMARY KEY,
-	email TEXT NOT NULL,
+	email TEXT UNIQUE NOT NULL,
 	password_hash TEXT NOT NULL,
 
 	priviledge_type TEXT NOT NULL,

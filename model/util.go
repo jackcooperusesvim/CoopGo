@@ -33,6 +33,7 @@ func BuildTables() error {
 	start_date := []string{"2000-12-30", "2000-12-30", "2000-12-30", "2000-12-30", "2000-12-30"}
 	end_date := []string{"1999-01-01", "1999-01-01", "1999-01-01", "1999-01-01", "1999-01-01"}
 
+	err = UnsafeCreateAccount("user", "1234", "admin")
 	if err != nil {
 		return err
 	}

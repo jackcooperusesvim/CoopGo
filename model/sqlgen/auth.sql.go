@@ -10,18 +10,58 @@ import (
 	"database/sql"
 )
 
+const checkPasswordAccount = `-- name: CheckPasswordAccount :one
+SELECT id, priviledge_type, family_id 
+FROM account 
+WHERE password_hash = ? AND email = ?
+LIMIT 1
+`
+
+type CheckPasswordAccountParams struct {
+	PasswordHash string
+	Email        string
+}
+
+type CheckPasswordAccountRow struct {
+	ID             int64
+	PriviledgeType string
+	FamilyID       sql.NullInt64
+}
+
+func (q *Queries) CheckPasswordAccount(ctx context.Context, arg CheckPasswordAccountParams) (CheckPasswordAccountRow, error) {
+	row := q.db.QueryRowContext(ctx, checkPasswordAccount, arg.PasswordHash, arg.Email)
+	var i CheckPasswordAccountRow
+	err := row.Scan(&i.ID, &i.PriviledgeType, &i.FamilyID)
+	return i, err
+}
+
 const createSessionToken = `-- name: CreateSessionToken :one
-INSERT INTO session (token,expiration_datetime,account_id) VALUES (?,?,?) RETURNING id, token, expiration_datetime, account_id
+INSERT INTO session (token,expiration_datetime,account_id) VALUES (?,
+    datetime(
+        'now',
+        '+' || ? || ' days',
+        '+' || ? || ' hours',
+        '+' || ? || ' minutes'
+    ),?)
+RETURNING id, token, expiration_datetime, account_id
 `
 
 type CreateSessionTokenParams struct {
-	Token              string
-	ExpirationDatetime string
-	AccountID          int64
+	Token     string
+	Days      sql.NullString
+	Hours     sql.NullString
+	Minute    sql.NullString
+	AccountID int64
 }
 
 func (q *Queries) CreateSessionToken(ctx context.Context, arg CreateSessionTokenParams) (Session, error) {
-	row := q.db.QueryRowContext(ctx, createSessionToken, arg.Token, arg.ExpirationDatetime, arg.AccountID)
+	row := q.db.QueryRowContext(ctx, createSessionToken,
+		arg.Token,
+		arg.Days,
+		arg.Hours,
+		arg.Minute,
+		arg.AccountID,
+	)
 	var i Session
 	err := row.Scan(
 		&i.ID,
@@ -32,18 +72,22 @@ func (q *Queries) CreateSessionToken(ctx context.Context, arg CreateSessionToken
 	return i, err
 }
 
-const publiclyExecuteTokens = `-- name: PubliclyExecuteTokens :exec
+const publiclyUnaliveTokens = `-- name: PubliclyUnaliveTokens :exec
 DELETE FROM session 
-WHERE session.expiration_datetime <= ?
+WHERE session.expiration_datetime <= datetime('now')
 `
 
-func (q *Queries) PubliclyExecuteTokens(ctx context.Context, expirationDatetime string) error {
-	_, err := q.db.ExecContext(ctx, publiclyExecuteTokens, expirationDatetime)
+func (q *Queries) PubliclyUnaliveTokens(ctx context.Context) error {
+	_, err := q.db.ExecContext(ctx, publiclyUnaliveTokens)
 	return err
 }
 
 const unsafeCreateAccount = `-- name: UnsafeCreateAccount :one
-INSERT INTO account (email,password_hash, priviledge_type,last_updated) VALUES (?,?,?,CURRENT_TIMESTAMP) RETURNING id, email, password_hash, priviledge_type, last_updated, family_id
+INSERT INTO account 
+	(email,password_hash, priviledge_type,last_updated) 
+VALUES 
+	(?,?,?,datetime('now')) 
+RETURNING id, email, password_hash, priviledge_type, last_updated, family_id
 `
 
 type UnsafeCreateAccountParams struct {
@@ -67,10 +111,12 @@ func (q *Queries) UnsafeCreateAccount(ctx context.Context, arg UnsafeCreateAccou
 }
 
 const validateSessionToken = `-- name: ValidateSessionToken :one
+;
+
 SELECT account.id, account.priviledge_type FROM session
 LEFT JOIN account
 ON account.id = session.account_id
-WHERE session.token = ?
+WHERE session.token = ? AND session.expiration_datetime>datetime('now')
 `
 
 type ValidateSessionTokenRow struct {

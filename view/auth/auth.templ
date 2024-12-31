@@ -2,7 +2,7 @@ package auth
 
 import "github.com/jackcooperusesvim/coopGo/view/layout"
 
-templ LoginPage() {
+templ LoginPage(csrf string) {
 @layout.Base() {
 <h2>Log In</h2>
 <div role="tablist" aria-label="Sign In Options">
@@ -11,18 +11,19 @@ templ LoginPage() {
 </div>
 <div id="family" role="tabpanel">
 	<form class="table rows" hx-boost="true" action="/family/login" method="POST">
-		@LoginFormFields()
+		@LoginFormFields(csrf)
 	</form>
 </div>
 <div id="admin" role="tabpanel" hidden>
 	<form class="table rows" hx-boost="true" action="/admin/login" method="POST">
-		@LoginFormFields()
+		@LoginFormFields(csrf)
 	</form>
 </div>
 }
 }
 
-templ LoginFormFields() {
+templ LoginFormFields(csrf string) {
+<input type="hidden" id="csrf" name="csrf" value={ csrf } />
 <p><label for="email">Email</label> <input type="text" id="email" name="email" /></p>
 <p><label for="password">Password</label> <input type="password" id="password" name="password" /></p>
 <p><input type="submit" value="Login" /></p>

@@ -21,12 +21,13 @@ func ValidateToken(token string) (privledge_level string, account_id int64, err 
 	if err != nil {
 		return "", 0, err
 	}
+
 	token_row, err := q.ValidateSessionToken(ctx, token_hash)
 
 	if err != nil {
 		return "", 0, err
 	}
-	return token_row.PriviledgeType.String, token_row.ID.Int64, nil
+	return token_row.PriviledgeType, token_row.ID, nil
 
 }
 func Login(email, password string) (token, privledge_level string, account_id int64, err error) {
@@ -39,7 +40,7 @@ func Login(email, password string) (token, privledge_level string, account_id in
 
 	res, err := q.CheckPasswordAccount(ctx, sqlgen.CheckPasswordAccountParams{
 		Email:        email,
-		PasswordHash: string(password_hash),
+		PasswordHash: password_hash,
 	})
 
 	token = GenerateSecureToken(10)
@@ -78,7 +79,7 @@ func Login(email, password string) (token, privledge_level string, account_id in
 		return "", "", 0, err
 	}
 
-	return token, token_row.PriviledgeType.String, token_row.ID.Int64, nil
+	return token, token_row.PriviledgeType, token_row.ID, nil
 
 }
 

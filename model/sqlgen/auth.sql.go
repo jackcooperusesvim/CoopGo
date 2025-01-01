@@ -83,6 +83,7 @@ func (q *Queries) PubliclyUnaliveTokens(ctx context.Context) error {
 }
 
 const unsafeCreateAccount = `-- name: UnsafeCreateAccount :one
+
 INSERT INTO account 
 	(email,password_hash, priviledge_type,last_updated) 
 VALUES 
@@ -96,6 +97,7 @@ type UnsafeCreateAccountParams struct {
 	PriviledgeType string
 }
 
+// AND session.expiration_datetime>datetime('now');
 func (q *Queries) UnsafeCreateAccount(ctx context.Context, arg UnsafeCreateAccountParams) (Account, error) {
 	row := q.db.QueryRowContext(ctx, unsafeCreateAccount, arg.Email, arg.PasswordHash, arg.PriviledgeType)
 	var i Account
@@ -114,14 +116,14 @@ const validateSessionToken = `-- name: ValidateSessionToken :one
 ;
 
 SELECT account.id, account.priviledge_type FROM session
-LEFT JOIN account
+INNER JOIN account
 ON account.id = session.account_id
-WHERE session.token = ? AND session.expiration_datetime>datetime('now')
+WHERE session.token = ?
 `
 
 type ValidateSessionTokenRow struct {
-	ID             sql.NullInt64
-	PriviledgeType sql.NullString
+	ID             int64
+	PriviledgeType string
 }
 
 func (q *Queries) ValidateSessionToken(ctx context.Context, token string) (ValidateSessionTokenRow, error) {

@@ -47,8 +47,7 @@ func main() {
 	// }
 
 	app.GET("/login", AuthHandler.AuthPage)
-	app.POST("/family/login", AuthHandler.Login)
-	app.POST("/admin/login", AuthHandler.Login)
+	app.POST("/new_session", AuthHandler.Login)
 
 	app.GET("/course", cm.BehindAuth(courseHandler.HandleCourseShow))
 	app.GET("/course/edit/:id", courseHandler.HandleCourseEdit)

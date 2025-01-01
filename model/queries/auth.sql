@@ -14,9 +14,9 @@ RETURNING * ;
 
 -- name: ValidateSessionToken :one
 SELECT account.id, account.priviledge_type FROM session
-LEFT JOIN account
+INNER JOIN account
 ON account.id = session.account_id
-WHERE session.token = ? AND session.expiration_datetime>datetime('now');
+WHERE session.token = ?;--AND session.expiration_datetime>datetime('now');
 
 -- name: UnsafeCreateAccount :one
 INSERT INTO account 

@@ -7,6 +7,7 @@ import (
 
 	"github.com/jackcooperusesvim/coopGo/model"
 	"github.com/jackcooperusesvim/coopGo/view/auth"
+	"github.com/jackcooperusesvim/coopGo/view/layout"
 	"github.com/labstack/echo/v4"
 )
 
@@ -21,9 +22,11 @@ func (h AuthHandler) Login(c echo.Context) error {
 	log.Println("AuthPage")
 	email := c.FormValue("email")
 	password := c.FormValue("password")
+	log.Println(email)
+	log.Println(password)
 	token, _, _, err := model.Login(email, password)
 	if err != nil {
-		log.Println("auth")
+		log.Println("Bad Auth")
 		// c.Response().Header().Set("HX-Redirect", "/course")
 		// This is where bad auth goes
 		return c.NoContent(401)
@@ -40,8 +43,8 @@ func (h AuthHandler) Login(c echo.Context) error {
 	log.Println("cookies")
 	log.Println(c.Cookies())
 
-	// c.Response().Header().Set("HX-Redirect", "/course")
+	c.Response().Header().Set("HX-Redirect", "/course")
 	//TODO: Send the user to the proper domain
 
-	return c.HTML(200, "")
+	return render(c, layout.Redirect("/course"))
 }

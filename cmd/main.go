@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"time"
 
 	"github.com/jackcooperusesvim/coopGo/handler"
 	cm "github.com/jackcooperusesvim/coopGo/middleware"
@@ -28,6 +29,21 @@ func main() {
 
 	app := echo.New()
 
+	//Background processes
+	go func() {
+		q, ctx, err := model.DbInfo()
+		if err == nil {
+			for {
+				err := q.PubliclyUnaliveTokens(ctx)
+				if err != nil {
+					log.Println(err)
+				}
+				time.Sleep(time.Minute)
+			}
+		}
+		log.Println(err)
+	}()
+
 	//Various Middlewares
 	app.Use(middleware.Logger())
 	app.Use(middleware.CSRFWithConfig(
@@ -42,23 +58,36 @@ func main() {
 	courseHandler := handler.CourseHandler{}
 
 	AuthHandler := handler.AuthHandler{}
-	// adminACL := &cm.ACL{
-	// 	AuthGroups: []string{"admin"},
-	// }
+	adminACL := &cm.ACL{
+		AuthGroups: []string{"admin"},
+	}
 
 	app.GET("/login", AuthHandler.AuthPage)
 	app.POST("/new_session", AuthHandler.Login)
 
 	app.GET("/course", cm.BehindAuth(courseHandler.HandleCourseShow))
-	app.GET("/course/edit/:id", courseHandler.HandleCourseEdit)
-	app.GET("/course/new", courseHandler.HandleCourseNew)
+	app.GET("/course/edit/:id", cm.BehindAuth(adminACL.Restrict(courseHandler.HandleCourseEdit)))
+	app.GET("/course/new", cm.BehindAuth(adminACL.Restrict(courseHandler.HandleCourseNew)))
 
-	app.POST("/course/update", courseHandler.HandleCoursePost)
-	app.POST("/course/create", courseHandler.HandleCourseCreate)
-	app.POST("/course/delete", courseHandler.HandleCourseDelete)
+	app.POST("/course/update", cm.BehindAuth(adminACL.Restrict(courseHandler.HandleCoursePost)))
+	app.POST("/course/create", cm.BehindAuth(adminACL.Restrict(courseHandler.HandleCourseCreate)))
+	app.POST("/course/delete", cm.BehindAuth(adminACL.Restrict(courseHandler.HandleCourseDelete)))
 
 	log.Println("app created")
 	err = app.Start("localhost:4321")
 	log.Println("app ended on error:")
 	log.Println(err)
+}
+
+func GETBehindAuth(app *echo.Echo, route string, handler echo.HandlerFunc, allowed_groups []string) {
+	acl := cm.ACL{
+		AuthGroups: allowed_groups}
+
+	app.GET(route, cm.BehindAuth(acl.Restrict(handler)))
+}
+func POSTBehindAuth(app *echo.Echo, route string, handler echo.HandlerFunc, allowed_groups []string) {
+	acl := cm.ACL{
+		AuthGroups: allowed_groups}
+
+	app.POST(route, cm.BehindAuth(acl.Restrict(handler)))
 }

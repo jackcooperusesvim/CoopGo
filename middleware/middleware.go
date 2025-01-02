@@ -20,8 +20,8 @@ func NewACL() *ACL {
 
 func (m *ACL) Restrict(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		log.Println(c.Cookie("session_token"))
 		priv := c.Get("privledge_level").(string)
+		log.Println(priv)
 		for _, group := range m.AuthGroups {
 			if group == priv {
 				return next(c)

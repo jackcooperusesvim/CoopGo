@@ -71,7 +71,6 @@ const getSessionTokens = `-- name: GetSessionTokens :many
 SELECT account.id, account.priviledge_type, session.token FROM session
 INNER JOIN account
 ON account.id = session.account_id
-WHERE session.expiration_datetime>datetime('now')
 `
 
 type GetSessionTokensRow struct {
@@ -109,7 +108,7 @@ const getSimilarSessionTokens = `-- name: GetSimilarSessionTokens :many
 SELECT account.id, account.priviledge_type, session.token FROM session
 INNER JOIN account
 ON account.id = session.account_id
-WHERE session.token LIKE (?1) AND session.expiration_datetime>datetime('now')
+WHERE session.token LIKE (?1)
 `
 
 type GetSimilarSessionTokensRow struct {

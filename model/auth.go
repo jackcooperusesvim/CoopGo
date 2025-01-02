@@ -18,24 +18,28 @@ func ValidateToken(token string) (privledge_level string, account_id int64, err 
 		return "", 0, err
 	}
 
-	hash_rows, err := q.GetSimilarSessionTokens(ctx, token[:3])
+	// hash_rows, err := q.GetSimilarSessionTokens(ctx, token[:3]+"%")
+	// log.Println(token[:3] + "%")
 
-	if err != nil {
-		return "", 0, err
-	}
-	for _, hash_row := range hash_rows {
+	// if err != nil {
+	// 	return "", 0, err
+	// }
+	// for _, hash_row := range hash_rows {
+	//
+	// 	if bcrypt.CompareHashAndPassword([]byte(hash_row.Token), []byte(token)) == nil {
+	// 		log.Println(token[:3] + "%")
+	// 		return hash_row.PriviledgeType, hash_row.ID, nil
+	// 	}
+	// }
 
-		if bcrypt.CompareHashAndPassword([]byte(hash_row.Token), []byte(token)) == nil {
-			return hash_row.PriviledgeType, hash_row.ID, nil
-		}
-	}
-
+	log.Println("Second Go")
 	hash_rows_all, err := q.GetSessionTokens(ctx)
 	if err != nil {
 		return "", 0, err
 	}
 	for _, hash_row := range hash_rows_all {
 		if bcrypt.CompareHashAndPassword([]byte(hash_row.Token), []byte(token)) == nil {
+			log.Println(hash_row.Token)
 			return hash_row.PriviledgeType, hash_row.ID, nil
 		}
 	}

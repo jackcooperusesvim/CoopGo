@@ -16,13 +16,12 @@ RETURNING * ;
 SELECT account.id, account.priviledge_type, session.token FROM session
 INNER JOIN account
 ON account.id = session.account_id
-WHERE session.token LIKE (@token_beginning_with_wildcard) AND session.expiration_datetime>datetime('now');
+WHERE session.token LIKE (@token_beginning_with_wildcard);
 
 -- name: GetSessionTokens :many
 SELECT account.id, account.priviledge_type, session.token FROM session
 INNER JOIN account
-ON account.id = session.account_id
-WHERE session.expiration_datetime>datetime('now');
+ON account.id = session.account_id;
 
 -- name: UnsafeCreateAccount :one
 INSERT INTO account 

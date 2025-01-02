@@ -10,31 +10,6 @@ import (
 	"database/sql"
 )
 
-const checkPasswordAccount = `-- name: CheckPasswordAccount :one
-SELECT id, priviledge_type, family_id 
-FROM account 
-WHERE password_hash = ? AND email = ?
-LIMIT 1
-`
-
-type CheckPasswordAccountParams struct {
-	PasswordHash string
-	Email        string
-}
-
-type CheckPasswordAccountRow struct {
-	ID             int64
-	PriviledgeType string
-	FamilyID       sql.NullInt64
-}
-
-func (q *Queries) CheckPasswordAccount(ctx context.Context, arg CheckPasswordAccountParams) (CheckPasswordAccountRow, error) {
-	row := q.db.QueryRowContext(ctx, checkPasswordAccount, arg.PasswordHash, arg.Email)
-	var i CheckPasswordAccountRow
-	err := row.Scan(&i.ID, &i.PriviledgeType, &i.FamilyID)
-	return i, err
-}
-
 const createSessionToken = `-- name: CreateSessionToken :one
 INSERT INTO session (token,expiration_datetime,account_id) VALUES (?,
     datetime(
@@ -72,6 +47,100 @@ func (q *Queries) CreateSessionToken(ctx context.Context, arg CreateSessionToken
 	return i, err
 }
 
+const getAccountInfo = `-- name: GetAccountInfo :one
+SELECT id, priviledge_type, password_hash
+FROM account
+WHERE email = ?
+LIMIT 1
+`
+
+type GetAccountInfoRow struct {
+	ID             int64
+	PriviledgeType string
+	PasswordHash   string
+}
+
+func (q *Queries) GetAccountInfo(ctx context.Context, email string) (GetAccountInfoRow, error) {
+	row := q.db.QueryRowContext(ctx, getAccountInfo, email)
+	var i GetAccountInfoRow
+	err := row.Scan(&i.ID, &i.PriviledgeType, &i.PasswordHash)
+	return i, err
+}
+
+const getSessionTokens = `-- name: GetSessionTokens :many
+SELECT account.id, account.priviledge_type, session.token FROM session
+INNER JOIN account
+ON account.id = session.account_id
+WHERE session.expiration_datetime>datetime('now')
+`
+
+type GetSessionTokensRow struct {
+	ID             int64
+	PriviledgeType string
+	Token          string
+}
+
+func (q *Queries) GetSessionTokens(ctx context.Context) ([]GetSessionTokensRow, error) {
+	rows, err := q.db.QueryContext(ctx, getSessionTokens)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetSessionTokensRow
+	for rows.Next() {
+		var i GetSessionTokensRow
+		if err := rows.Scan(&i.ID, &i.PriviledgeType, &i.Token); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getSimilarSessionTokens = `-- name: GetSimilarSessionTokens :many
+;
+
+SELECT account.id, account.priviledge_type, session.token FROM session
+INNER JOIN account
+ON account.id = session.account_id
+WHERE session.token LIKE (?1) AND session.expiration_datetime>datetime('now')
+`
+
+type GetSimilarSessionTokensRow struct {
+	ID             int64
+	PriviledgeType string
+	Token          string
+}
+
+func (q *Queries) GetSimilarSessionTokens(ctx context.Context, tokenBeginningWithWildcard string) ([]GetSimilarSessionTokensRow, error) {
+	rows, err := q.db.QueryContext(ctx, getSimilarSessionTokens, tokenBeginningWithWildcard)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetSimilarSessionTokensRow
+	for rows.Next() {
+		var i GetSimilarSessionTokensRow
+		if err := rows.Scan(&i.ID, &i.PriviledgeType, &i.Token); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const publiclyUnaliveTokens = `-- name: PubliclyUnaliveTokens :exec
 DELETE FROM session 
 WHERE session.expiration_datetime <= datetime('now')
@@ -83,7 +152,6 @@ func (q *Queries) PubliclyUnaliveTokens(ctx context.Context) error {
 }
 
 const unsafeCreateAccount = `-- name: UnsafeCreateAccount :one
-
 INSERT INTO account 
 	(email,password_hash, priviledge_type,last_updated) 
 VALUES 
@@ -97,7 +165,6 @@ type UnsafeCreateAccountParams struct {
 	PriviledgeType string
 }
 
-// AND session.expiration_datetime>datetime('now');
 func (q *Queries) UnsafeCreateAccount(ctx context.Context, arg UnsafeCreateAccountParams) (Account, error) {
 	row := q.db.QueryRowContext(ctx, unsafeCreateAccount, arg.Email, arg.PasswordHash, arg.PriviledgeType)
 	var i Account
@@ -109,26 +176,5 @@ func (q *Queries) UnsafeCreateAccount(ctx context.Context, arg UnsafeCreateAccou
 		&i.LastUpdated,
 		&i.FamilyID,
 	)
-	return i, err
-}
-
-const validateSessionToken = `-- name: ValidateSessionToken :one
-;
-
-SELECT account.id, account.priviledge_type FROM session
-INNER JOIN account
-ON account.id = session.account_id
-WHERE session.token = ?
-`
-
-type ValidateSessionTokenRow struct {
-	ID             int64
-	PriviledgeType string
-}
-
-func (q *Queries) ValidateSessionToken(ctx context.Context, token string) (ValidateSessionTokenRow, error) {
-	row := q.db.QueryRowContext(ctx, validateSessionToken, token)
-	var i ValidateSessionTokenRow
-	err := row.Scan(&i.ID, &i.PriviledgeType)
 	return i, err
 }

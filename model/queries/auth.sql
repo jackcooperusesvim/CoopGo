@@ -12,11 +12,17 @@ INSERT INTO session (token,expiration_datetime,account_id) VALUES (?,
     ),?)
 RETURNING * ;
 
--- name: ValidateSessionToken :one
-SELECT account.id, account.priviledge_type FROM session
+-- name: GetSimilarSessionTokens :many
+SELECT account.id, account.priviledge_type, session.token FROM session
 INNER JOIN account
 ON account.id = session.account_id
-WHERE session.token = ?;--AND session.expiration_datetime>datetime('now');
+WHERE session.token LIKE (@token_beginning_with_wildcard) AND session.expiration_datetime>datetime('now');
+
+-- name: GetSessionTokens :many
+SELECT account.id, account.priviledge_type, session.token FROM session
+INNER JOIN account
+ON account.id = session.account_id
+WHERE session.expiration_datetime>datetime('now');
 
 -- name: UnsafeCreateAccount :one
 INSERT INTO account 
@@ -25,8 +31,8 @@ VALUES
 	(?,?,?,datetime('now')) 
 RETURNING *;
 
--- name: CheckPasswordAccount :one
-SELECT id, priviledge_type, family_id 
-FROM account 
-WHERE password_hash = ? AND email = ?
+-- name: GetAccountInfo :one
+SELECT id, priviledge_type, password_hash
+FROM account
+WHERE email = ?
 LIMIT 1;

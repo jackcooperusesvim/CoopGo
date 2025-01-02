@@ -38,7 +38,7 @@ func BuildTables() error {
 		return err
 	}
 	_, err = q.UnsafeCreateAccount(ctx, sqlgen.UnsafeCreateAccountParams{
-		Email:          "user@example.com",
+		Email:          "user",
 		PasswordHash:   ph,
 		PriviledgeType: "admin",
 	})

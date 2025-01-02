@@ -20,10 +20,15 @@ func (h AuthHandler) AuthPage(c echo.Context) error {
 
 func (h AuthHandler) Login(c echo.Context) error {
 	log.Println("AuthPage")
+
 	email := c.FormValue("email")
 	password := c.FormValue("password")
+
+	log.Println("email")
 	log.Println(email)
+	log.Println("password")
 	log.Println(password)
+
 	token, _, _, err := model.Login(email, password)
 	if err != nil {
 		log.Println("Bad Auth")

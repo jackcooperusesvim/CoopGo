@@ -1,36 +1,59 @@
 package course
 
 import (
-	"fmt"
-	"github.com/jackcooperusesvim/coopGo/model/sqlgen"
-	"github.com/jackcooperusesvim/coopGo/view/layout"
+"fmt"
+"github.com/jackcooperusesvim/coopGo/model/sqlgen"
+"github.com/jackcooperusesvim/coopGo/view/layout"
 )
 
 templ List(courses []sqlgen.Course) {
-	@layout.Base() {
-		<h2>Classes</h2>
-		<table>
-			<form action="/course/new" method="GET">
-				<input type="submit" value="New Course"/>
-			</form>
-			<tr>
-				<th>Name</th>
-				<th>Description</th>
-				<th>Start Date</th>
-				<th>End Date</th>
-			</tr>
-			for _, course := range courses {
-				<tr>
-					<td>{ course.Name }</td>
-					<td>{ course.Desc }</td>
-					<td>{ course.StartDate }</td>
-					<td>{ course.EndDate }</td>
-					<td>
-						<a href={ templ.SafeURL(fmt.Sprintf("/course/edit/:id=%v", course.ID)) }>edit</a>
-					</td>
-				</tr>
-			}
-			<tr></tr>
-		</table>
+@layout.Base() {
+<h2>Classes</h2>
+<table>
+	<form action="/course/new" method="GET">
+		<input type="submit" value="New Course" />
+	</form>
+	<tr>
+		<th>Name</th>
+		<th>Description</th>
+		<th>Start Date</th>
+		<th>End Date</th>
+	</tr>
+	for _, course := range courses {
+	<tr>
+		<td>{ course.Name }</td>
+		<td>{ course.Desc }</td>
+		<td>{ course.StartDate }</td>
+		<td>{ course.EndDate }</td>
+		<td>
+			<a href={ templ.SafeURL(fmt.Sprintf("/course/edit/:id=%v", course.ID)) }>edit</a>
+		</td>
+	</tr>
 	}
+	<tr></tr>
+</table>
+}
+}
+
+templ ListNoAuth(courses []sqlgen.Course) {
+@layout.Base() {
+<h2>Classes</h2>
+<table>
+	<tr>
+		<th>Name</th>
+		<th>Description</th>
+		<th>Start Date</th>
+		<th>End Date</th>
+	</tr>
+	for _, course := range courses {
+	<tr>
+		<td>{ course.Name }</td>
+		<td>{ course.Desc }</td>
+		<td>{ course.StartDate }</td>
+		<td>{ course.EndDate }</td>
+	</tr>
+	}
+	<tr></tr>
+</table>
+}
 }

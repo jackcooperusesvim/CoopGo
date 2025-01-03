@@ -23,6 +23,13 @@ SELECT account.id, account.priviledge_type, session.token FROM session
 INNER JOIN account
 ON account.id = session.account_id;
 
+-- name: GetSessionToken :one
+SELECT account.id, account.priviledge_type, session.token FROM session
+INNER JOIN account
+ON account.id = session.account_id
+WHERE session.token = ?
+LIMIT 1;
+
 -- name: UnsafeCreateAccount :one
 INSERT INTO account 
 	(email,password_hash, priviledge_type,last_updated) 

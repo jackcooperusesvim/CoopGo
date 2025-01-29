@@ -29,15 +29,19 @@ templ MenuButton() {
 </form>
 }
 
+templ DeleteCourseButton(course_id int64, csrf string) {
+<form hx-boost="true" action="/course/delete" method="POST">
+	<input type="hidden" id="id" name="id" value={ strconv.Itoa(int(course_id)) } />
+	<input type="submit" value="Delete Record" />
+	<input type="hidden" id="csrf" name="csrf" value={ csrf } />
+</form>
+}
+
 templ EditForm(course sqlgen.Course, csrf string, is_new bool) {
 <section class="tool-bar">
 	<button onClick="window.location.reload();">Reset Fields</button>
-	<form hx-confirm="Are you sure you wish to delete this course?" hx-boost="true" action="/course/delete"
-		method="POST">
-		<input type="hidden" id="id" name="id" value={ strconv.Itoa(int(course.ID)) } />
-		<input type="submit" value="Delete Record" />
-	</form>
 	<hr aria-orientation="vertical" />
+	@DeleteCourseButton(course.ID, csrf)
 	@MenuButton()
 </section>
 <div>

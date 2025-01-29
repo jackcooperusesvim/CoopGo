@@ -2,9 +2,9 @@ package model
 
 import (
 	"crypto/rand"
+	"crypto/sha256"
 	"database/sql"
 	"encoding/hex"
-	"errors"
 	"log"
 
 	"github.com/jackcooperusesvim/coopGo/model/sqlgen"
@@ -32,19 +32,13 @@ func ValidateToken(token string) (privledge_level string, account_id int64, err 
 	// 	}
 	// }
 
-	log.Println("Second Go")
-	hash_rows_all, err := q.GetSessionTokens(ctx)
+	log.Println("ValidateToken")
+	val_row, err := q.ValidateToken(ctx, HashNoSalt(token))
+
 	if err != nil {
 		return "", 0, err
 	}
-	for _, hash_row := range hash_rows_all {
-		if bcrypt.CompareHashAndPassword([]byte(hash_row.Token), []byte(token)) == nil {
-			log.Println(hash_row.Token)
-			return hash_row.PriviledgeType, hash_row.ID, nil
-		}
-	}
-	return "", 0, errors.New("session token not found")
-
+	return val_row.PriviledgeType, val_row.ID, nil
 }
 
 func Login(email, password string) (token, privledge_level string, account_id int64, err error) {
@@ -67,12 +61,7 @@ func Login(email, password string) (token, privledge_level string, account_id in
 	}
 
 	token = GenerateSecureToken(10)
-	token_hash, err := Hash(token)
-
-	if err != nil {
-		log.Println(err)
-		return "", "", 0, err
-	}
+	token_hash := HashNoSalt(token)
 
 	_, err = q.CreateSessionToken(ctx, sqlgen.CreateSessionTokenParams{
 		Token: token_hash,
@@ -127,6 +116,11 @@ func UnsafeCreateAccount(email, password, privledge_type string) error {
 func Hash(i string) (string, error) {
 	h, e := bcrypt.GenerateFromPassword([]byte(i), bcrypt.DefaultCost)
 	return string(h), e
+}
+func HashNoSalt(i string) string {
+	hasher := sha256.New()
+	hasher.Write([]byte(i))
+	return hex.EncodeToString(hasher.Sum(nil))
 }
 
 // StackOverflow Code : https://stackoverflow.com/questions/45267125/how-to-generate-unique-random-alphanumeric-tokens-in-golang

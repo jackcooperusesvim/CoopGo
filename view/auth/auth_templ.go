@@ -43,14 +43,14 @@ func LoginPage(csrf string) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<h2>Log In</h2><form class=\"\" hx-boost=\"true\" action=\"/new_session\" method=\"POST\"><input type=\"hidden\" id=\"csrf\" name=\"csrf\" value=\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<h2>Log In</h2><p>Test Admin:<br>&ensp;username: admin<br>&ensp;password: 1234</p><form class=\"\" hx-boost=\"true\" action=\"/new_session\" method=\"POST\"><input type=\"hidden\" id=\"csrf\" name=\"csrf\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(csrf)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/auth/auth.templ`, Line: 9, Col: 58}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/auth/auth.templ`, Line: 16, Col: 56}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {

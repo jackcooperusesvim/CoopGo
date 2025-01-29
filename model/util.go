@@ -29,7 +29,7 @@ func CreateTables() error {
 func BuildTables() error {
 	q, ctx, err := DbInfo()
 	names := []string{"CompSci", "JavaScript", "Mathematics", "History", "Science"}
-	desc := []string{"Interesting, but sometimes boring", "Horrible", "Ok", "Nonononono", "Boring"}
+	desc := []string{"Interesting", "Can't wait for WASM", "Proof is left as an exercise to the reader", "Those who forget are condemned to repeat", "Too smort"}
 	start_date := []string{"2000-12-30", "2000-12-30", "2000-12-30", "2000-12-30", "2000-12-30"}
 	end_date := []string{"1999-01-01", "1999-01-01", "1999-01-01", "1999-01-01", "1999-01-01"}
 
@@ -38,7 +38,7 @@ func BuildTables() error {
 		return err
 	}
 	_, err = q.UnsafeCreateAccount(ctx, sqlgen.UnsafeCreateAccountParams{
-		Email:          "user",
+		Email:          "admin",
 		PasswordHash:   ph,
 		PriviledgeType: "admin",
 	})

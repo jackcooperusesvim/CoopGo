@@ -67,79 +67,6 @@ func (q *Queries) GetAccountInfo(ctx context.Context, email string) (GetAccountI
 	return i, err
 }
 
-const getSessionTokens = `-- name: GetSessionTokens :many
-SELECT account.id, account.priviledge_type, session.token FROM session
-INNER JOIN account
-ON account.id = session.account_id
-`
-
-type GetSessionTokensRow struct {
-	ID             int64
-	PriviledgeType string
-	Token          string
-}
-
-func (q *Queries) GetSessionTokens(ctx context.Context) ([]GetSessionTokensRow, error) {
-	rows, err := q.db.QueryContext(ctx, getSessionTokens)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []GetSessionTokensRow
-	for rows.Next() {
-		var i GetSessionTokensRow
-		if err := rows.Scan(&i.ID, &i.PriviledgeType, &i.Token); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const getSimilarSessionTokens = `-- name: GetSimilarSessionTokens :many
-;
-
-SELECT account.id, account.priviledge_type, session.token FROM session
-INNER JOIN account
-ON account.id = session.account_id
-WHERE session.token LIKE (?1)
-`
-
-type GetSimilarSessionTokensRow struct {
-	ID             int64
-	PriviledgeType string
-	Token          string
-}
-
-func (q *Queries) GetSimilarSessionTokens(ctx context.Context, tokenBeginningWithWildcard string) ([]GetSimilarSessionTokensRow, error) {
-	rows, err := q.db.QueryContext(ctx, getSimilarSessionTokens, tokenBeginningWithWildcard)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []GetSimilarSessionTokensRow
-	for rows.Next() {
-		var i GetSimilarSessionTokensRow
-		if err := rows.Scan(&i.ID, &i.PriviledgeType, &i.Token); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
 const publiclyUnaliveTokens = `-- name: PubliclyUnaliveTokens :exec
 DELETE FROM session 
 WHERE session.expiration_datetime <= datetime('now')
@@ -175,5 +102,27 @@ func (q *Queries) UnsafeCreateAccount(ctx context.Context, arg UnsafeCreateAccou
 		&i.LastUpdated,
 		&i.FamilyID,
 	)
+	return i, err
+}
+
+const validateToken = `-- name: ValidateToken :one
+;
+
+SELECT account.id, account.priviledge_type, session.token FROM session
+INNER JOIN account
+ON account.id = session.account_id
+WHERE session.token = ?
+`
+
+type ValidateTokenRow struct {
+	ID             int64
+	PriviledgeType string
+	Token          string
+}
+
+func (q *Queries) ValidateToken(ctx context.Context, token string) (ValidateTokenRow, error) {
+	row := q.db.QueryRowContext(ctx, validateToken, token)
+	var i ValidateTokenRow
+	err := row.Scan(&i.ID, &i.PriviledgeType, &i.Token)
 	return i, err
 }

@@ -12,16 +12,11 @@ INSERT INTO session (token,expiration_datetime,account_id) VALUES (?,
     ),?)
 RETURNING * ;
 
--- name: GetSimilarSessionTokens :many
+-- name: ValidateToken :one
 SELECT account.id, account.priviledge_type, session.token FROM session
 INNER JOIN account
 ON account.id = session.account_id
-WHERE session.token LIKE (@token_beginning_with_wildcard);
-
--- name: GetSessionTokens :many
-SELECT account.id, account.priviledge_type, session.token FROM session
-INNER JOIN account
-ON account.id = session.account_id;
+WHERE session.token = ?;
 
 -- name: UnsafeCreateAccount :one
 INSERT INTO account 

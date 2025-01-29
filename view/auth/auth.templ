@@ -3,14 +3,21 @@ package auth
 import "github.com/jackcooperusesvim/coopGo/view/layout"
 
 templ LoginPage(csrf string) {
-	@layout.Base() {
-		<h2>Log In</h2>
-		<form class="" hx-boost="true" action="/new_session" method="POST">
-			<input type="hidden" id="csrf" name="csrf" value={ csrf }/>
-			<label for="email">Email</label>
-			<input type="text" id="email" name="email"/>
-			<label for="password">Password</label> <input type="password" id="password" name="password"/>
-			<input type="submit" value="Login"/>
-		</form>
-	}
+@layout.Base() {
+<h2>Log In</h2>
+<p>
+	Test Admin:
+	<br />
+	&ensp;username: admin
+	<br />
+	&ensp;password: 1234
+</p>
+<form class="" hx-boost="true" action="/new_session" method="POST">
+	<input type="hidden" id="csrf" name="csrf" value={ csrf } />
+	<label for="email">Email</label>
+	<input type="text" id="email" name="email" />
+	<label for="password">Password</label> <input type="password" id="password" name="password" />
+	<input type="submit" value="Login" />
+</form>
+}
 }

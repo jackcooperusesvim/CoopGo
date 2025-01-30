@@ -15,7 +15,28 @@ import (
 
 type CourseHandler struct{}
 
-func (h CourseHandler) HandleCourseShow(c echo.Context) error {
+func (h CourseHandler) HandleCoursePage(c echo.Context) error {
+	priv := c.Get("privledge_level").(string)
+	log.Println("HandleCourseShow")
+	q, ctx, err := model.DbInfo()
+
+	if err != nil {
+		return err
+	}
+
+	courses, err := q.ListCourse(ctx)
+
+	if err != nil {
+		return err
+	}
+	if priv == "admin" {
+		return render(c, course.List(courses))
+	} else {
+		return render(c, course.ListNoAuth(courses))
+	}
+}
+
+func (h CourseHandler) HandleCoursePageNoAuth(c echo.Context) error {
 	log.Println("HandleCourseShow")
 	q, ctx, err := model.DbInfo()
 

@@ -65,7 +65,7 @@ func main() {
 	app.GET("/login", AuthHandler.AuthPage)
 	app.POST("/new_session", AuthHandler.Login)
 
-	app.GET("/course", cm.BehindAuth(courseHandler.HandleCourseShow))
+	app.GET("/course", cm.BehindAuth(courseHandler.HandleCoursePage))
 	app.GET("/course/edit/:id", cm.BehindAuth(adminACL.Restrict(courseHandler.HandleCourseEdit)))
 	app.GET("/course/new", cm.BehindAuth(adminACL.Restrict(courseHandler.HandleCourseNew)))
 

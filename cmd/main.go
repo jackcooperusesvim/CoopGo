@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"net/http"
 	"time"
 
 	"github.com/jackcooperusesvim/coopGo/handler"
@@ -62,6 +63,9 @@ func main() {
 		AuthGroups: []string{"admin"},
 	}
 
+	app.GET("/", func(c echo.Context) error {
+		return c.Redirect(http.StatusMovedPermanently, "/login")
+	})
 	app.GET("/login", AuthHandler.AuthPage)
 	app.POST("/new_session", AuthHandler.Login)
 

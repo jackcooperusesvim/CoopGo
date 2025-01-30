@@ -67,6 +67,27 @@ func (q *Queries) GetAccountInfo(ctx context.Context, email string) (GetAccountI
 	return i, err
 }
 
+const getSessionToken = `-- name: GetSessionToken :one
+SELECT account.id, account.priviledge_type, session.token FROM session
+INNER JOIN account
+ON account.id = session.account_id
+WHERE session.token = ?
+LIMIT 1
+`
+
+type GetSessionTokenRow struct {
+	ID             int64
+	PriviledgeType string
+	Token          string
+}
+
+func (q *Queries) GetSessionToken(ctx context.Context, token string) (GetSessionTokenRow, error) {
+	row := q.db.QueryRowContext(ctx, getSessionToken, token)
+	var i GetSessionTokenRow
+	err := row.Scan(&i.ID, &i.PriviledgeType, &i.Token)
+	return i, err
+}
+
 const publiclyUnaliveTokens = `-- name: PubliclyUnaliveTokens :exec
 DELETE FROM session 
 WHERE session.expiration_datetime <= datetime('now')

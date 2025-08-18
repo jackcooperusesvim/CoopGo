@@ -2,7 +2,7 @@
 
 ## What makes this project special
 ### Accomplishments
-This is a go Web-App (or website, I have no idea what the difference is), which I started working on for a local homeschool co-op after finding out about the horrors of the system they were using. The project was dropped by the co-op, but I kept working on it for practice, and maybe to release it as a White-Label SaaS at some point.
+This is a go Web-App (or website, I have no idea what the difference is), which I started working on for a local homeschool co-op after finding out about the horrors of the system they were using. The project was dropped by the co-op, but I kept working on it for practice.
 
 The thing I am most proud of here is probably the security. I hand-rolled my own Session auth* and ACL middlware. I also added both XSS prevention and form-enforced CSRF mitigation (both via templating and middleware).
 
